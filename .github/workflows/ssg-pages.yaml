@@ -97,7 +97,22 @@ jobs:
         run: |
           echo "Inspecting before building"
           tree .
-          [ -f ./manifest.json ] && ./result/bin/ssg-manifest build --gen-index --min-html --min-html-copy --min-css --min-js
+
+          if [ -x ./result/bin/soyweb ]; then
+            echo "Using soyweb"
+            [ -f ./manifest.json ] && ./result/bin/soyweb build --min-html --min-html-copy --min-css --min-js
+
+          elif [ -x ./result/bin/ssg-manifest ]; then
+            echo "Using ssg-manifest"
+            [ -f ./manifest.json ] && ./result/bin/soyweb build --gen-index --min-html --min-html-copy --min-css --min-js
+
+          else
+            echo "Missing executable"
+            exit 2
+
+          fi;
+
+          echo "Build: ok"
           echo "Inspecting after building"
           tree .
 
